@@ -1,14 +1,10 @@
+import { CustomAdapter } from '@/lib/custom-adapter';
 import NextAuth from 'next-auth';
-import GitHub from 'next-auth/providers/github';
+import { authConfig } from './auth.config';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    GitHub({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
-  ],
-  pages: {
-    signIn: '/signin',
-  },
-});
+export const config = {
+  ...authConfig,
+  adapter: CustomAdapter(),
+};
+
+export const { handlers, signIn, signOut, auth } = NextAuth(config);
