@@ -20,12 +20,14 @@ export const authConfig = {
         if (credentials.token && credentials.user) {
           // Trust the token from our Backend
           const user = JSON.parse(credentials.user as string);
+
+          // Return user object compatible with NextAuth User type
           return {
             id: user.id || 'uuid',
             name: user.full_name,
             email: user.email,
             image: user.avatar_url,
-            accessToken: credentials.token,
+            accessToken: credentials.token as string,
           };
         }
         return null;
@@ -42,13 +44,13 @@ export const authConfig = {
       }
       if (token.accessToken) {
         // Pass access_token to session if needed
-        (session as any).accessToken = token.accessToken;
+        session.accessToken = token.accessToken as string;
       }
       return session;
     },
     async jwt({ token, user, trigger, session }) {
-      if (user && (user as any).accessToken) {
-        token.accessToken = (user as any).accessToken;
+      if (user && user.accessToken) {
+        token.accessToken = user.accessToken;
       }
       return token;
     },
