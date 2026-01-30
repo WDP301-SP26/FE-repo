@@ -1,4 +1,5 @@
 import { AuthListener } from '@/components/auth-listener';
+import { MSWProvider } from '@/components/msw-provider';
 import { TailwindIndicator } from '@/components/tailwind-indicator';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -34,20 +35,22 @@ export default function RootLayout({
           'min-h-screen bg-background antialiased w-full mx-auto scroll-smooth',
         )}
       >
-        <SessionProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
-          >
-            <Suspense fallback={null}>
-              <AuthListener />
-            </Suspense>
-            {children}
-            <ThemeToggle />
-            <TailwindIndicator />
-          </ThemeProvider>
-        </SessionProvider>
+        <MSWProvider>
+          <SessionProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="light"
+              enableSystem={false}
+            >
+              <Suspense fallback={null}>
+                <AuthListener />
+              </Suspense>
+              {children}
+              <ThemeToggle />
+              <TailwindIndicator />
+            </ThemeProvider>
+          </SessionProvider>
+        </MSWProvider>
       </body>
     </html>
   );
