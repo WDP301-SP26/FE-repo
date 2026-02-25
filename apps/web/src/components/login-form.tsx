@@ -11,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/authStore';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -44,6 +45,9 @@ export function LoginForm({
 
       const data = await response.json();
       console.log('✅ Login success:', data);
+
+      // Save to Zustand store
+      useAuthStore.getState().setUser(data.user);
 
       // Redirect based on user role
       if (data.user?.role === 'lecturer') {

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -5,14 +7,65 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useAuthStore } from '@/stores/authStore';
+import { useEffect, useState } from 'react';
 
 export default function LecturerDashboardPage() {
+  const user = useAuthStore((state) => state.user);
+  const [groups, setGroups] = useState([]);
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    // Fetch MSW Mock Data
+    const fetchData = async () => {
+      try {
+        // Delay to allow MSW service worker to activate on initial load
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        console.log('Fetching groups and projects...');
+
+        const [groupsRes, projectsRes] = await Promise.all([
+          fetch('/api/groups'),
+          fetch('/api/projects'),
+        ]);
+
+        if (groupsRes.ok) {
+          const groupsData = await groupsRes.json();
+          console.log('Groups fetched successfully:', groupsData);
+          setGroups(groupsData);
+        } else {
+          console.error(
+            'Failed to fetch groups:',
+            groupsRes.status,
+            groupsRes.statusText,
+          );
+        }
+
+        if (projectsRes.ok) {
+          const projectsData = await projectsRes.json();
+          console.log('Projects fetched successfully:', projectsData);
+          setProjects(projectsData);
+        } else {
+          console.error(
+            'Failed to fetch projects:',
+            projectsRes.status,
+            projectsRes.statusText,
+          );
+        }
+      } catch (error) {
+        console.error('Error fetching mock data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Lecturer Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back! Here's an overview of your groups and students.
+          Welcome back, {user?.full_name || 'Lecturer'}! Here's an overview of
+          your assigned groups and projects.
         </p>
       </div>
 
@@ -23,27 +76,43 @@ export default function LecturerDashboardPage() {
             <CardDescription>Groups you're managing</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold">5</div>
+            <div className="text-4xl font-bold">{groups.length}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="col-span-1 md:col-span-2 lg:col-span-3">
           <CardHeader>
-            <CardTitle>Active Projects</CardTitle>
-            <CardDescription>Currently ongoing projects</CardDescription>
+            <CardTitle>Student Projects</CardTitle>
+            <CardDescription>Click to view evaluation reports</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold">12</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Students</CardTitle>
-            <CardDescription>Students under supervision</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">48</div>
+            <div className="rounded-md border">
+              {projects.length === 0 ? (
+                <div className="p-4 text-center text-sm text-muted-foreground">
+                  No projects found.
+                </div>
+              ) : (
+                <div className="divide-y">
+                  {projects.map((project: any) => (
+                    <a
+                      key={project.id}
+                      href={`/lecturer/projects/${project.id}`}
+                      className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                    >
+                      <div>
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {project.jira_project_key}
+                        </div>
+                      </div>
+                      <div className="text-primary text-sm font-medium">
+                        View Report &rarr;
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -81,7 +150,7 @@ export default function LecturerDashboardPage() {
         <h3 className="font-semibold text-primary">🎓 Test Credentials</h3>
         <ul className="mt-2 space-y-1 text-sm">
           <li>
-            <strong>Email:</strong> lecturer1@fpt.edu.vn
+            <strong>Email:</strong> lecturer1@fe.edu.vn
           </li>
           <li>
             <strong>Password:</strong> password123

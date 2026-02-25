@@ -5,7 +5,6 @@ import { AlertTriangle, BarChart3, Home, Settings, Users2 } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -78,11 +77,6 @@ export function LecturerSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="px-4 py-2 text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">
-          Managing 5 groups • 48 students
-        </div>
-      </SidebarFooter>
     </Sidebar>
   );
 }

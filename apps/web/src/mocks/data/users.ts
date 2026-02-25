@@ -12,7 +12,7 @@ export interface User {
 export const mockUsers: User[] = [
   {
     id: 'lecturer-001',
-    email: 'lecturer1@fpt.edu.vn',
+    email: 'lecturer1@fe.edu.vn',
     password: 'password123',
     full_name: 'Dr. Nguyen Van A',
     role: 'lecturer',
