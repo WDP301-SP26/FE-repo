@@ -7,7 +7,8 @@ on:
   pull_request:
 
 jobs:
-  main:
+  test:
+    name: Lint & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,8 +28,30 @@ jobs:
 
       - uses: nrwl/nx-set-shas@v4
 
-      - run: pnpm exec nx affected -t lint
-      - run: pnpm exec nx affected -t test
+      - name: Run Lint
+        run: pnpm exec nx affected -t lint
+        
+      - name: Run Tests
+        run: pnpm exec nx affected -t test
+
+  build:
+    name: Build & Docker
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
       - name: Build frontend app
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
