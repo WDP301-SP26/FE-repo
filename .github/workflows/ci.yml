@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch full history for Nx affected
+          fetch-depth: 0 # Fetch full history for Nx affected
 
       - uses: pnpm/action-setup@v2
         with:
@@ -30,7 +30,7 @@ jobs:
 
       - name: Run Lint
         run: pnpm exec nx affected -t lint
-        
+
       - name: Run Tests
         run: pnpm exec nx affected -t test
 
@@ -54,7 +54,7 @@ jobs:
 
       - name: Build frontend app
         env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
+          NODE_OPTIONS: '--max-old-space-size=4096'
         run: pnpm exec nx run web:build --skip-nx-cache
 
       - name: Set up Docker Buildx
