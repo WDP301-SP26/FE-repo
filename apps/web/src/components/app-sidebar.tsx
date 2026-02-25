@@ -2,9 +2,11 @@
 
 import { BarChart, GitGraph, Home, Inbox, Settings, Users } from 'lucide-react';
 
+import { NavUser } from '@/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -12,6 +14,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { authAPI } from '@/lib/api';
+import { useAuthStore } from '@/stores/authStore';
+import { useEffect } from 'react';
 
 // Menu items.
 const items = [
@@ -48,6 +53,23 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { user, setUser } = useAuthStore();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await authAPI.getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+
+    if (!user) {
+      fetchUser();
+    }
+  }, [user, setUser]);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarContent>
@@ -69,6 +91,17 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        {user && (
+          <NavUser
+            user={{
+              name: user.full_name,
+              email: user.email,
+              avatar: user.avatar_url || '',
+            }}
+          />
+        )}
+      </SidebarFooter>
     </Sidebar>
   );
 }
