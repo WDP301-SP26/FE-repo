@@ -9,10 +9,13 @@ import {
 } from '@/components/ui/drawer';
 import { siteConfig } from '@/lib/config';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import { IoMenuSharp } from 'react-icons/io5';
 
 export default function drawerDemo() {
+  const { isAuthenticated } = useAuthStore();
+
   return (
     <Drawer>
       <DrawerTrigger>
@@ -47,22 +50,37 @@ export default function drawerDemo() {
           </nav>
         </DrawerHeader>
         <DrawerFooter>
-          <Link
-            href="/login"
-            className={buttonVariants({ variant: 'outline' })}
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className={cn(
-              buttonVariants({ variant: 'default' }),
-              'w-full sm:w-auto text-background flex gap-2',
-            )}
-          >
-            <Icons.logo className="h-6 w-6" />
-            Get Started for Free
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href="/dashboard"
+              className={cn(
+                buttonVariants({ variant: 'default' }),
+                'w-full sm:w-auto text-background flex gap-2',
+              )}
+            >
+              <Icons.logo className="h-6 w-6" />
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/signin"
+                className={buttonVariants({ variant: 'outline' })}
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className={cn(
+                  buttonVariants({ variant: 'default' }),
+                  'w-full sm:w-auto text-background flex gap-2',
+                )}
+              >
+                <Icons.logo className="h-6 w-6" />
+                Get Started for Free
+              </Link>
+            </>
+          )}
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

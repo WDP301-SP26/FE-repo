@@ -4,13 +4,31 @@ import Drawer from '@/components/drawer';
 import { Icons } from '@/components/icons';
 import Menu from '@/components/menu';
 import { buttonVariants } from '@/components/ui/button';
+import { authAPI } from '@/lib/api';
 import { siteConfig } from '@/lib/config';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/stores/authStore';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
   const [addBorder, setAddBorder] = useState(false);
+  const { isAuthenticated, setUser } = useAuthStore();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await authAPI.getCurrentUser();
+        setUser(userData);
+      } catch {
+        // Silently fail for unauthenticated users
+      }
+    };
+
+    if (!isAuthenticated) {
+      fetchUser();
+    }
+  }, [isAuthenticated, setUser]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,22 +69,37 @@ export default function Header() {
             </nav>
 
             <div className="gap-2 flex">
-              <Link
-                href="/signin"
-                className={buttonVariants({ variant: 'outline' })}
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className={cn(
-                  buttonVariants({ variant: 'default' }),
-                  'w-full sm:w-auto text-background flex gap-2',
-                )}
-              >
-                <Icons.logo className="h-6 w-6" />
-                Get Started for Free
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  href="/dashboard"
+                  className={cn(
+                    buttonVariants({ variant: 'default' }),
+                    'w-full sm:w-auto text-background flex gap-2',
+                  )}
+                >
+                  <Icons.logo className="h-6 w-6" />
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/signin"
+                    className={buttonVariants({ variant: 'outline' })}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className={cn(
+                      buttonVariants({ variant: 'default' }),
+                      'w-full sm:w-auto text-background flex gap-2',
+                    )}
+                  >
+                    <Icons.logo className="h-6 w-6" />
+                    Get Started for Free
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
