@@ -10,10 +10,21 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { useEffect, useState } from 'react';
 
+interface Group {
+  id: string;
+  name: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  jira_project_key: string | null;
+}
+
 export default function LecturerDashboardPage() {
   const user = useAuthStore((state) => state.user);
-  const [groups, setGroups] = useState([]);
-  const [projects, setProjects] = useState([]);
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     // Fetch MSW Mock Data
@@ -93,7 +104,7 @@ export default function LecturerDashboardPage() {
                 </div>
               ) : (
                 <div className="divide-y">
-                  {projects.map((project: any) => (
+                  {projects.map((project: Project) => (
                     <a
                       key={project.id}
                       href={`/lecturer/projects/${project.id}`}

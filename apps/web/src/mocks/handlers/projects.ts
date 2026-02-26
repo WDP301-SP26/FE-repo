@@ -26,12 +26,10 @@ export const projectHandlers = [
     return HttpResponse.json(project);
   }),
 
-  // MOCK KILLER FEATURE: Auto-Sync LOC & Jira Status
-  http.get('/api/projects/:id/sync-loc', ({ params }) => {
-    const { id } = params;
-
-    // Simulate latency of fetching from GitHub & Jira APIs
-    // In reality, this endpoint would talk to Backend which talks to GitHub/Jira
+  // MOCK KILLER FEATURE 1: LOC Auto-Sync (Template 3)
+  http.get('/api/projects/:id/sync-loc', async () => {
+    // Simulate latency of fetching Jira & GitHub data
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const mockSyncedData = [
       {
@@ -80,9 +78,7 @@ export const projectHandlers = [
   }),
 
   // MOCK KILLER FEATURE 2: Group Evaluation (Template 2)
-  http.get('/api/projects/:id/evaluation', async ({ params }) => {
-    const { id } = params;
-
+  http.get('/api/projects/:id/evaluation', async () => {
     // Simulate latency
     await new Promise((resolve) => setTimeout(resolve, 800));
 

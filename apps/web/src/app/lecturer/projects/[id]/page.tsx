@@ -6,11 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  jira_project_key: string | null;
+  github_repo_url: string | null;
+}
+
 export default function ProjectDetailsPage() {
   const params = useParams();
   const projectId = params.id as string;
 
-  const [project, setProject] = useState<any>(null);
+  const [project, setProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
